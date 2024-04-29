@@ -35,6 +35,16 @@ param openAIInstances openAIInstanceInfo[] = [
     location: 'uksouth'
     suffix: 'uks'
   }
+  {
+    name: ''
+    location: 'canadaeast'
+    suffix: 'cae'
+  }
+  {
+    name: ''
+    location: 'francecentral'
+    suffix: 'frc'
+  }
 ]
 @description('Name of the API Management service. If empty, a unique name will be generated.')
 param apiManagementName string = ''
@@ -175,7 +185,7 @@ module loadBalancingPolicy './modules/api-management-policy.bicep' = {
     apiManagementName: apiManagement.outputs.name
     apiName: openAIApi.outputs.name
     format: 'rawxml'
-    value: loadTextContent('../../assets/apim_policies/round-robin-policy.xml')
+    value: loadTextContent('../../assets/apim_policies/round-robin-policy-v2.xml')
   }
 }
 
