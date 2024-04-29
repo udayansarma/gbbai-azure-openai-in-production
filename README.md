@@ -1,72 +1,112 @@
 # <img src="./utils/images/azure_logo.png" alt="Azure Logo" style="width:30px;height:30px;"/> AOAI in Production
 
-The shift from traditional, resource-intensive machine learning operations to a flexible, API-centric Model as a Service (MaaS) approach presents new challenges in the General AI Application lifecycle. This approach aligns more closely with software engineering principles, particularly in the design and development of microservices, and introduces key challenges in latency, scalability, and monitoring.
+Transitioning from traditional, resource-intensive machine learning operations to a flexible, API-centric Model as a Service (MaaS) approach presents new challenges in the General AI Application lifecycle. This approach aligns more closely with software engineering principles, particularly in the design and development of microservices, and introduces key challenges in latency, scalability, and monitoring.
 
-Key questions often arise in enterprise environments:
+<p align="center">
+    <img src="utils/images/microservices.png" alt="Microservices" style="max-width: 100%;">
+</p>
 
-- 📈 Scalability: "How can my application handle a 1000-fold increase in user interactions without encountering 'Too Many Requests' errors?"
-- ⚡ Latency and Performance: "How can I reduce latency and improve system performance?"
-- 🚀 Deployment and Monitoring: "What strategies can centralize deployment on a self-service platform for better monitoring and management?"
+## 🤔 Key Questions
+
+In enterprise environments, the following questions often arise:
+
+- 📈 **Scalability**: How can my application handle a 1000-fold increase in user interactions without encountering 'Too Many Requests' errors?
+- ⚡ **Latency and Performance**: How can I reduce latency and improve system performance?
+- 🚀 **Deployment and Monitoring**: What strategies can centralize deployment on a self-service platform for better monitoring and management?
 
 These questions underscore the need for scalable, efficient AI solutions in modern software architectures. To address these, we'll provide a plan to optimize your large language model (LLM) systems with the AOIA as the reasoning engine.
 
+## 🚀 Intro to Scalability, Monitoring, and Latency in GenAI Production
 
-## 🚀 Managing Scalability, Monitoring, and Latency in GenAI Production 📈
+**Scalability** is tied to quota and rate limits. Services like Azure OpenAI manage this through Tokens-Per-Minute (TPM) and Requests-Per-Minute (RPM). TPM measures the volume of text processed each minute, while RPM regulates API calls to prevent system overload. By using a microservices approach, you can distribute traffic across multiple deployments to effectively increase your overall quota.
 
-Scalability is tied to quota and rate limits. Services like Azure OpenAI manage this through Tokens-Per-Minute (TPM) and Requests-Per-Minute (RPM). TPM measures the volume of text processed each minute, while RPM regulates API calls to prevent system overload. By using a microservices approach, you can distribute traffic across multiple deployments to effectively increase your overall quota.
+<p align="center">
+    <img src="utils/images/load_balancer.png" alt="Load Balancer", style="max-width: 100%;">
+</p>
 
-Monitoring and management are crucial as AI technology advances. The rapid enhancement of Large Language Models (LLMs) like GPT-4 signals a shift towards exponential application growth. This necessitates strategic overhauls in management practices, deployment methodologies, and monitoring frameworks. We advocate for a centralized deployment strategy to refine production processes, augment monitoring capabilities, and adapt operational workflows.
+**Monitoring and management** are crucial as AI technology advances. The rapid enhancement of Large Language Models (LLMs) like GPT-4 signals a shift towards exponential application growth. This necessitates strategic overhauls in management practices, deployment methodologies, and monitoring frameworks. We advocate for a centralized deployment strategy to refine production processes, augment monitoring capabilities, and adapt operational workflows.
 
-Latency can arise from platform hardware limitations and client application design. 
+**Latency** can arise from platform hardware limitations and client application design. 
 
-🔍 Understanding AOAI Deployment Options:
-- 💸 PAYGO (Pay-As-You-Go): Charges based on actual usage with no upfront commitments, similar to a prepaid mobile phone plan.
-- 📦 Provisioned Throughput Units (PTU): Offers fixed-term commitment pricing, where customers purchase a set amount of throughput capacity in advance to ensure predictable and consistent service performance.
+🔍 **Understanding AOAI Deployment Options**:
+- 💸 **PAYGO (Pay-As-You-Go)**: Charges based on actual usage with no upfront commitments, similar to a prepaid mobile phone plan.
+- 📦 **Provisioned Throughput Units (PTU)**: Offers fixed-term commitment pricing, where customers purchase a set amount of throughput capacity in advance to ensure predictable and consistent service performance.
 
 Hardware limitations significantly affect latency, especially for AOAI users experiencing fluctuations in latency throughout the day in specific regions. This is common with PAYG deployments, which function within shared capacity environments.
 
+<p align="center">
+    <img src="utils/images/PTU.png" alt="PTU">
+</p>
+
 Client limitations can also contribute to latency. The LLM API(AOAI) implements rate limits to preserve its limited capacity. When the rate limit is exceeded, the API responds with a 429 status code. Clients with application logic that cannot exploit the backoff signal and adapt to capacity constraints will not handle retries effectively.
 
+<p align="center">
+    <img src="utils/images/client vs hardware.png" alt="Client vs Hardware", style="max-width: 100%;">
+</p>
 
+# Managing Scalability and Reliability with Azure API Management for OpenAI Endpoints
 
-# :rocket: Smart load balancing for OpenAI endpoints and Azure API Management
+API calls often have limits set by service providers, including OpenAI. Azure OpenAI enforces token limits (TPM) and request limits (RPM). When these limits are reached, a 429 HTTP status code is returned, indicating 'Too Many Requests', along with a Retry-After response header specifying the wait time before the next request.
 
-Many service providers, including OpenAI usually set limits on the number of calls that can be made. In the case of Azure OpenAI, there are token limits (TPM or tokens per minute) and limits on the number of requests per minute (RPM). When a server starts running out of resources or the service limits are exhausted, the provider may issue a 429 or TooManyRequests HTTP Status code, and also a Retry-After response header indicating how much time you should wait until you try the next request.
+This document outlines a comprehensive strategy to handle these limits. It includes a well-designed user experience and workflow, application resiliency, fault-handling logic, service limit considerations, appropriate model selection, API policies, and logging and monitoring setup. The key feature is the use of Azure API Management (APIM) to expose a single endpoint to your applications while efficiently managing multiple OpenAI (or any API) backends based on availability and priority.
 
-The solution presented here is part of comprehensive one that takes into consideration things like a good UX/workflow design, adding application resiliency and fault-handling logic, considering service limits, choosing the right model for the job, the API policies, setting up logging and monitoring among other considerations. The solution shows how to create an Azure API Management Policy to seamlessly expose a single endpoint to your applications while keeping an efficient logic to consume two or more OpenAI or any API backends based on availability and priority.
+## Scalability vs Reliability
 
-## :sparkles: Why do you call this "smart" and different from round-robin load balancers?
+This solution addresses both scalability and reliability concerns. It allows your total Azure OpenAI quotas to increase and provides server-side failovers transparently for your applications. If you are looking purely for a way to increase default quotas, we recommend following the official guidance to [request a quota increase](https://learn.microsoft.com/azure/ai-services/openai/quotas-limits#how-to-request-increases-to-the-default-quotas-and-limits).
 
-One of the key components of handling OpenAI throttling is to be aware of the HTTP status code error 429 (Too Many Requests). There are [Tokens-Per-Minute and a Requests-Per-Minute](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/quota?tabs=rest#understanding-rate-limits) rate limiting in Azure OpenAI. Both situations will return the same error code 429.
+## Caching and Multiple API Management Instances
 
-Together with that HTTP status code 429, Azure OpenAI will also return a HTTP response header called "Retry-After", which is the number of seconds that instance will be unavailable before it starts accepting requests again.
+This policy uses API Management's internal cache mode, an in-memory local cache. If you have multiple API Management instances running in one region or a multi-regional deployment, each instance will have its own list of backends. This could lead to unnecessary roundtrips to throttled endpoints. To solve this, you can change API Management [to use an external Redis cache](https://learn.microsoft.com/azure/api-management/api-management-howto-cache-external) so all instances will share the same cached object.
 
-These errors are normally handled in the client-side by SDKs. This works great if you have a single API endpoint. However, for multiple OpenAI endpoints (used for fallback) you would need to manage the list of URLs in the client-side too, which is not ideal.
+## 💡 The "Smart" in Smart Load Balancing
 
-What makes this API Management solution different than others is that it is aware of the "Retry-After" and 429 errors and intelligently sends traffic to other OpenAI backends that are not currently throttling. You can even have a priority order in your backends, so the highest priority are the ones being consumed first while they are not throttling. When throttling kicks in, API Management will fall back to lower priority backends while your highest ones are waiting to recover. 
+What sets this APIM solution apart is its awareness of the HTTP status code 429 and the Retry-After response header. When a backend starts throttling, APIM intelligently redirects traffic to other available backends. You can set a priority order for your backends, with higher priority ones being used first until they start throttling. At that point, APIM falls back to lower priority backends.
 
-Another important feature: there is no time interval between attempts to call different backends. Many of API Management sample policies out there configure a waiting internal (often exponential). While this is a good idea doing at the client side, making API Management to wait in the server-side of things is not a good practice because you hold your client and consume more API Management capacity during this waiting time. Retries on the server-side should be immediate and to a different endpoint.
+Unlike many other APIM policies, this solution does not configure a waiting interval between attempts to call different backends. While this is a good practice on the client-side, it's not ideal on the server-side as it holds the client and consumes more APIM capacity during the wait time. With this solution, retries on the server-side are immediate and directed to a different endpoint.
 
-Check this diagram for easier understanding:
+## 🔄 Round-Robin Load Balancing
 
-![normal!](/images/apim-loadbalancing-active.png "Normal scenario")
+Round-robin load balancing is a simple method for distributing client requests across a group of servers. When a server goes down, the load balancer redirects traffic to the remaining online servers. When a new server is added to the server group, the load balancer automatically starts to send requests to it.
 
-![throttling!](/images/apim-loadbalancing-throttling.png "Throttling scenario")
+In this context, round-robin load balancing can be used to distribute API calls across multiple OpenAI backends. This can help to ensure that no single backend becomes a bottleneck and can improve the overall performance of your application.
 
-## :1234: Priorities
+## 🧠 Smart Load Balancing
 
-One thing that stands out in the above images is the concept of "priority groups". Why do we have that? That's because you might want to consume all your available quota in specific instances before falling back to others. For example, in this scenario:
-- You have a [PTU (Provisioned Throughput)](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/provisioned-throughput) deployment. You want to consume all its capacity first because you are paying for this either you use it or not. You can set this instance(s) as **Priority 1**
-- Then you have extra deployments using the default S0 tier (token-based consumption model) spread in different Azure regions which you would like to fallback in case your PTU instance is fully occupied and returning errors 429. Here you don't have a fixed pricing model like in PTU but you will consume these endpoints only during the period that PTU is not available. You can set these as **Priority 2**
+Smart load balancing, on the other hand, is more sophisticated. It takes into account the current load of each server and their capacity when distributing the requests. This means that if one server is under heavy load, new requests will be sent to other servers with more capacity.
 
-Another scenario:
-- You don't have any PTU (provisioned) deployment but you would like to have many S0 (token-based consumption model) spread in different Azure regions in case you hit throttling. Let's assume your applications are mostly in USA.
-- You then deploy one instance of OpenAI in each region of USA that has OpenAI capacity. You can set these instance(s) as **Priority 1**
-- However, if all USA instances are getting throttled, you have another set of endpoints in Canada, which is closest region outside of USA. You can set these instance(s) as **Priority 2**
-- Even if Canada also gets throttling at the same at as your USA instances, you can fallback to European regions now. You can set these instance(s) as **Priority 3**
-- In the last case if all other previous endpoints are still throttling during the same time, you might even consider having OpenAI endpoints in Asia as "last resort". Latency will be little bit higher but still acceptable. You can set these instance(s) as **Priority 4**
+In the context of APIM, smart load balancing can be used to intelligently distribute API calls based on the availability and priority of each backend. This can help to ensure that your application remains responsive even when some backends start throttling.
 
-And what happens if I have multiple backends with the same priority? Let's assume I have 3 OpenAI backends in USA with all Priority = 1 and all of them are not throttling? In this case, the algorithm will randomly pick among these 3 URLs.
+Here are diagrams for a clearer understanding:
+
+<p align="center">
+    <img src="utils/images/apim_loadbalancing_active.png" alt="Normal scenario" style="max-width: 100%;">
+</p>
+
+<p align="center">
+    <img src="utils/images/apim_loadbalancing_throttling.png" alt="Throttling scenario" style="max-width: 100%;">
+</p>
+
+## 🤔 Choosing Between Round-Robin and Smart Load Balancing
+
+The choice between round-robin and smart load balancing depends on your specific requirements. If your backends have similar capacities and you want a simple and fair distribution of requests, round-robin load balancing could be a good choice. However, if your backends have different capacities or if you want to prioritize some backends over others, smart load balancing would be more appropriate.
+
+For example, if you have three backends with similar capacities, you could use round-robin load balancing to distribute the requests evenly. However, if one of those backends is more powerful and can handle more requests, you might want to use smart load balancing to send more requests to that backend.
+
+### Harnessing the Power of Smart Load Balancing for Optimized PTU and PAYG Deployments
+
+<p align="center">
+    <img src="utils/images/full_prod.png" alt="Full Production">
+</p>
+
+Smart load balancing shines when dealing with different types of deployments, such as Provisioned Throughput Units (PTU) and Pay-As-You-Go (PAYGO). The concept of "priority groups" plays a crucial role here. 
+
+Consider the following scenarios:
+
+- **Scenario 1**: You have a PTU deployment. Since you're paying for this capacity whether you use it or not, it makes sense to consume all its capacity first. This can be set as **Priority 1**. Additionally, you have extra deployments using the default S0 tier (token-based consumption model) spread across different Azure regions. These can serve as fallbacks in case your PTU instance is fully occupied and returning 429 errors. These can be set as **Priority 2**.
+
+- **Scenario 2**: You don't have any PTU deployment, but you have multiple S0 deployments spread across different Azure regions to handle throttling. For instance, if your applications are mostly in the USA, you can deploy one instance of OpenAI in each region of the USA that has OpenAI capacity. These can be set as **Priority 1**. If all USA instances are getting throttled, you can fall back to instances in Canada, set as **Priority 2**. If Canada also gets throttled, you can fall back to European regions, set as **Priority 3**. As a last resort, you might even consider having OpenAI endpoints in Asia, set as **Priority 4**.
+
+In cases where multiple backends have the same priority and none of them are throttling, the algorithm will randomly pick among these URLs. This ensures that no single backend becomes a bottleneck, improving the overall performance and reliability of your application.
 
 ## :gear: Setup instructions
 

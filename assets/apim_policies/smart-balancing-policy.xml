@@ -29,7 +29,7 @@
                     backends.Add(new JObject()
                     {
                         { "url", "https://dev-aoai-aoai-northcentralus.openai.azure.com/" },
-                        { "priority", 1},
+                        { "priority", 2},
                         { "isThrottling", false },
                         { "retryAfter", DateTime.MinValue }
                     });
@@ -37,7 +37,7 @@
                     backends.Add(new JObject()
                     {
                         { "url", "https://dev-aoai-aoai2-eastus.openai.azure.com/" },
-                        { "priority", 1},
+                        { "priority", 3},
                         { "isThrottling", false },
                         { "retryAfter", DateTime.MinValue }
                     });
