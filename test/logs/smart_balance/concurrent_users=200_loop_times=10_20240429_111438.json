@@ -1,0 +1,51 @@
+{
+    "Overall": {
+        "Total Time": 35188.58700000064,
+        "Total Requests": 825,
+        "Total Successful Requests": 825,
+        "Total Unsuccessful Requests": 12,
+        "Errors": [
+            "('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))",
+            "('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))",
+            "('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))",
+            "('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))",
+            "('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))",
+            "('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))",
+            "('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))",
+            "('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))",
+            "('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))",
+            "('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))",
+            "('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))",
+            "('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))"
+        ],
+        "Requests per Minute": 275.0,
+        "Average Time per Request": 42.652832727273505,
+        "Min Time per Request": 14.172000000020489,
+        "Max Time per Request": 125.57800000003772,
+        "Median Time per Request": 32.07799999997951
+    },
+    "Canada East": {
+        "Total Time": 2954.314999999944,
+        "Total Requests": 87,
+        "Total Successful Requests": 87,
+        "Total Unsuccessful Requests": 0,
+        "Requests per Minute": 29.0,
+        "Errors": [],
+        "Average Time per Request": 33.957643678160274,
+        "Min Time per Request": 14.73399999999674,
+        "Max Time per Request": 125.57800000003772,
+        "Median Time per Request": 30.95400000002701
+    },
+    "North Central US": {
+        "Total Time": 32234.272000000696,
+        "Total Requests": 738,
+        "Total Successful Requests": 738,
+        "Total Unsuccessful Requests": 0,
+        "Requests per Minute": 246.0,
+        "Errors": [],
+        "Average Time per Request": 43.67787533875433,
+        "Min Time per Request": 14.172000000020489,
+        "Max Time per Request": 124.79699999996228,
+        "Median Time per Request": 32.22650000001886
+    }
+}

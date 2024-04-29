@@ -1,0 +1,38 @@
+{
+    "Overall": {
+        "Total Time": 9743.141000000178,
+        "Total Requests": 500,
+        "Total Successful Requests": 500,
+        "Total Unsuccessful Requests": 0,
+        "Errors": [],
+        "Requests per Minute": 166.66666666666666,
+        "Average Time per Request": 19.486282000000354,
+        "Min Time per Request": 5.796999999962281,
+        "Max Time per Request": 35.20299999997951,
+        "Median Time per Request": 19.469000000011874
+    },
+    "North Central US": {
+        "Total Time": 8552.186000000162,
+        "Total Requests": 434,
+        "Total Successful Requests": 434,
+        "Total Unsuccessful Requests": 0,
+        "Requests per Minute": 144.66666666666666,
+        "Errors": [],
+        "Average Time per Request": 19.705497695852905,
+        "Min Time per Request": 5.796999999962281,
+        "Max Time per Request": 35.20299999997951,
+        "Median Time per Request": 19.64900000000489
+    },
+    "Canada East": {
+        "Total Time": 1190.9550000000163,
+        "Total Requests": 66,
+        "Total Successful Requests": 66,
+        "Total Unsuccessful Requests": 0,
+        "Requests per Minute": 22.0,
+        "Errors": [],
+        "Average Time per Request": 18.044772727272974,
+        "Min Time per Request": 12.64100000000326,
+        "Max Time per Request": 28.34399999998277,
+        "Median Time per Request": 17.52349999998114
+    }
+}
