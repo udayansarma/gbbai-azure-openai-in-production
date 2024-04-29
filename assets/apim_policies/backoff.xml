@@ -1,0 +1,39 @@
+<policies>
+    <inbound>
+        <base />
+        <set-variable name="failoverAttempt" value="0" />
+        <set-backend-service backend-id="primary" />
+        <authentication-managed-identity resource="https://cognitiveservices.azure.com" />
+    </inbound>
+    <backend>
+         <retry condition="@(context.Response.StatusCode == 429 || context.Response.StatusCode >= 500)" count="5" interval="1" delta="1" max-interval="8" first-fast-retry="false">
+            <!-- Failover logic -->
+            <choose>
+                <!-- If response status code is 429 and it's the first failover attempt, switch to secondary backend -->
+                <when condition="@(context.Response.StatusCode == 429 || context.Response.StatusCode >= 500)">
+                    <set-backend-service backend-id="secondary" />
+                    <set-variable name="failoverAttempt" value="1" />
+                </when>
+                <!-- If secondary fails and it's the second failover attempt, switch to tertiary backend -->
+                <when condition="@(context.Response.StatusCode == 429 || context.Response.StatusCode >= 500)">
+                    <set-backend-service backend-id="tertiary" />
+                    <set-variable name="failoverAttempt" value="2" />
+                </when>
+                <!-- If tertiary fails and it's the third failover attempt, switch to quaternary backend -->
+                <when condition="@(context.Response.StatusCode == 429 || context.Response.StatusCode >= 500)">
+                    <set-backend-service backend-id="quaternary" />
+
+                </when>
+            </choose>
+            <!-- Forward the request to the selected backend -->
+            <forward-request buffer-request-body="true" />
+        </retry>
+    </backend>
+    <outbound>
+        <base />
+    </outbound>
+    <on-error>
+        <base />
+    </on-error>
+</policies>
+

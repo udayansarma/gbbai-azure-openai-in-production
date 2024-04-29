@@ -1,4 +1,33 @@
-![Smart APIM load balancing](./images/intro-loadbalance.png)
+# <img src="./utils/images/azure_logo.png" alt="Azure Logo" style="width:30px;height:30px;"/> AOAI in Production
+
+The shift from traditional, resource-intensive machine learning operations to a flexible, API-centric Model as a Service (MaaS) approach presents new challenges in the General AI Application lifecycle. This approach aligns more closely with software engineering principles, particularly in the design and development of microservices, and introduces key challenges in latency, scalability, and monitoring.
+
+Key questions often arise in enterprise environments:
+
+- 📈 Scalability: "How can my application handle a 1000-fold increase in user interactions without encountering 'Too Many Requests' errors?"
+- ⚡ Latency and Performance: "How can I reduce latency and improve system performance?"
+- 🚀 Deployment and Monitoring: "What strategies can centralize deployment on a self-service platform for better monitoring and management?"
+
+These questions underscore the need for scalable, efficient AI solutions in modern software architectures. To address these, we'll provide a plan to optimize your large language model (LLM) systems with the AOIA as the reasoning engine.
+
+
+## 🚀 Managing Scalability, Monitoring, and Latency in GenAI Production 📈
+
+Scalability is tied to quota and rate limits. Services like Azure OpenAI manage this through Tokens-Per-Minute (TPM) and Requests-Per-Minute (RPM). TPM measures the volume of text processed each minute, while RPM regulates API calls to prevent system overload. By using a microservices approach, you can distribute traffic across multiple deployments to effectively increase your overall quota.
+
+Monitoring and management are crucial as AI technology advances. The rapid enhancement of Large Language Models (LLMs) like GPT-4 signals a shift towards exponential application growth. This necessitates strategic overhauls in management practices, deployment methodologies, and monitoring frameworks. We advocate for a centralized deployment strategy to refine production processes, augment monitoring capabilities, and adapt operational workflows.
+
+Latency can arise from platform hardware limitations and client application design. 
+
+🔍 Understanding AOAI Deployment Options:
+- 💸 PAYGO (Pay-As-You-Go): Charges based on actual usage with no upfront commitments, similar to a prepaid mobile phone plan.
+- 📦 Provisioned Throughput Units (PTU): Offers fixed-term commitment pricing, where customers purchase a set amount of throughput capacity in advance to ensure predictable and consistent service performance.
+
+Hardware limitations significantly affect latency, especially for AOAI users experiencing fluctuations in latency throughout the day in specific regions. This is common with PAYG deployments, which function within shared capacity environments.
+
+Client limitations can also contribute to latency. The LLM API(AOAI) implements rate limits to preserve its limited capacity. When the rate limit is exceeded, the API responds with a 429 status code. Clients with application logic that cannot exploit the backoff signal and adapt to capacity constraints will not handle retries effectively.
+
+
 
 # :rocket: Smart load balancing for OpenAI endpoints and Azure API Management
 

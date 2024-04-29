@@ -1,0 +1,70 @@
+<policies>
+    <!-- Inbound policies are applied to the request before it is routed to the backend service -->
+    <inbound>
+        <!-- The base policy is a predefined policy that includes common behaviors -->
+        <base />
+        <!-- Retrieve the value of "backend-counter" from the cache and store it in a variable -->
+        <cache-lookup-value key="backend-counter" variable-name="backend-counter" />
+        <!-- If "backend-counter" does not exist in the context variables, initialize it to 0 and store it in the cache -->
+        <choose>
+            <when condition="@(!context.Variables.ContainsKey("backend-counter"))">
+                <set-variable name="backend-counter" value="0" />
+                <cache-store-value key="backend-counter" value="0" duration="100" />
+            </when>
+        </choose>
+        <!-- If "backend-counter" is 0, route the request to "OpenAIUKS" and set "backend-counter" to 1; otherwise, route the request to "OpenAIWUS" and set "backend-counter" to 0 -->
+        <choose>
+            <when condition="@(Convert.ToInt32(context.Variables["backend-counter"]) == 0)">
+                <set-backend-service backend-id="OpenAIUKS" />
+                <set-variable name="backend-counter" value="1" />
+                <cache-store-value key="backend-counter" value="1" duration="100" />
+            </when>
+            <otherwise>
+                <set-backend-service backend-id="OpenAIWUS" />
+                <set-variable name="backend-counter" value="0" />
+                <cache-store-value key="backend-counter" value="0" duration="100" />
+            </otherwise>
+        </choose>
+        <!-- Authenticate with managed identity and store the access token in a variable -->
+        <authentication-managed-identity resource="https://cognitiveservices.azure.com" client-id="{{MANAGED-IDENTITY-CLIENT-ID}}" output-token-variable-name="msi-access-token" ignore-error="false" />
+        <!-- Set the "Authorization" header to the access token -->
+        <set-header name="Authorization" exists-action="override">
+            <value>@("Bearer " + (string)context.Variables["msi-access-token"])</value>
+        </set-header>
+        <!-- Rewrite the URI to the original path -->
+        <rewrite-uri template="@{return context.Request.OriginalUrl.Path;}" />
+    </inbound>
+    <!-- Backend policies are applied to the request before it is forwarded to the backend service -->
+    <backend>
+        <!-- If the response status code is 400 or higher, retry the request up to 3 times with an interval of 5 seconds -->
+        <retry condition="@(context.Response.StatusCode >= 400)" count="3" interval="5" first-fast-retry="true">
+            <!-- Retrieve the value of "backend-counter" from the cache and store it in a variable -->
+            <cache-lookup-value key="backend-counter" variable-name="backend-counter" />
+            <!-- If "backend-counter" is 0, route the request to "OpenAIUKS" and set "backend-counter" to 1; otherwise, route the request to "OpenAIWUS" and set "backend-counter" to 0 -->
+            <choose>
+                <when condition="@(Convert.ToInt32(context.Variables["backend-counter"]) == 0)">
+                    <set-backend-service backend-id="OpenAIUKS" />
+                    <set-variable name="backend-counter" value="1" />
+                    <cache-store-value key="backend-counter" value="1" duration="100" />
+                </when>
+                <otherwise>
+                    <set-backend-service backend-id="OpenAIWUS" />
+                    <set-variable name="backend-counter" value="0" />
+                    <cache-store-value key="backend-counter" value="0" duration="100" />
+                </otherwise>
+            </choose>
+            <!-- Forward the request to the backend service -->
+            <forward-request buffer-request-body="true" />
+        </retry>
+    </backend>
+    <!-- Outbound policies are applied to the response before it is sent back to the client -->
+    <outbound>
+        <!-- The base policy is a predefined policy that includes common behaviors -->
+        <base />
+    </outbound>
+    <!-- On-error policies are applied when there is an error -->
+    <on-error>
+        <!-- The base policy is a predefined policy that includes common behaviors -->
+        <base />
+    </on-error>
+</policies>

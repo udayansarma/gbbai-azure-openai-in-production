@@ -20,7 +20,7 @@
                     JArray backends = new JArray();
                     backends.Add(new JObject()
                     {
-                        { "url", "https://andre-openai-eastus.openai.azure.com/" },
+                        { "url", "https://dev-aoai-aoai-canadaeast.openai.azure.com/" },
                         { "priority", 1},
                         { "isThrottling", false }, 
                         { "retryAfter", DateTime.MinValue } 
@@ -28,7 +28,7 @@
 
                     backends.Add(new JObject()
                     {
-                        { "url", "https://andre-openai-eastus-2.openai.azure.com/" },
+                        { "url", "https://dev-aoai-aoai-northcentralus.openai.azure.com/" },
                         { "priority", 1},
                         { "isThrottling", false },
                         { "retryAfter", DateTime.MinValue }
@@ -36,7 +36,7 @@
 
                     backends.Add(new JObject()
                     {
-                        { "url", "https://andre-openai-northcentralus.openai.azure.com/" },
+                        { "url", "https://dev-aoai-aoai2-eastus.openai.azure.com/" },
                         { "priority", 1},
                         { "isThrottling", false },
                         { "retryAfter", DateTime.MinValue }
@@ -44,39 +44,7 @@
 
                     backends.Add(new JObject()
                     {
-                        { "url", "https://andre-openai-canadaeast.openai.azure.com/" },
-                        { "priority", 2},
-                        { "isThrottling", false },
-                        { "retryAfter", DateTime.MinValue }
-                    });
-
-                    backends.Add(new JObject()
-                    {
-                        { "url", "https://andre-openai-francecentral.openai.azure.com/" },
-                        { "priority", 3},
-                        { "isThrottling", false },
-                        { "retryAfter", DateTime.MinValue }
-                    });
-
-                    backends.Add(new JObject()
-                    {
-                        { "url", "https://andre-openai-uksouth.openai.azure.com/" },
-                        { "priority", 3},
-                        { "isThrottling", false },
-                        { "retryAfter", DateTime.MinValue }
-                    });
-
-                    backends.Add(new JObject()
-                    {
-                        { "url", "https://andre-openai-westeurope.openai.azure.com/" },
-                        { "priority", 3},
-                        { "isThrottling", false },
-                        { "retryAfter", DateTime.MinValue }
-                    });
-
-                    backends.Add(new JObject()
-                    {
-                        { "url", "https://andre-openai-australia.openai.azure.com/" },
+                        { "url", "https://dev-aoai-aoai2-eastus2.openai.azure.com/" },
                         { "priority", 4},
                         { "isThrottling", false },
                         { "retryAfter", DateTime.MinValue }
