@@ -163,3 +163,4 @@ notebooks/dev/test/*
 
 outputs
 multirun
+.env
