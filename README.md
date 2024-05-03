@@ -108,7 +108,7 @@ Consider the following scenarios:
 
 In cases where multiple backends have the same priority and none of them are throttling, the algorithm will randomly pick among these URLs. This ensures that no single backend becomes a bottleneck, improving the overall performance and reliability of your application.
 
-## :gear: Setup instructions
+## Setup instructions
 
 1. Provision an [Azure API Management instance](https://learn.microsoft.com/en-us/azure/api-management/get-started-create-service-instance) and ensure that you enable `Managed Identity` during provisioning.
 2. Provision your Azure OpenAI Service instances and deploy the same models and versions in each instance, while giving them the same name (e.g., name your deployment `gpt-35-turbo` or `gpt4-8k` in each instance and select the same version, e.g., `0613`)
@@ -167,7 +167,7 @@ In cases where multiple backends have the same priority and none of them are thr
     print(response)
     ```
 
-## :page_with_curl: Working with the policy
+## Working with the policy
 
 I'm using [API Management policies](https://learn.microsoft.com/azure/api-management/api-management-howto-policies) to define all this logic. API Management doesn't have built-in support for this scenario but by using custom policies we can achieve it. Let's take a look in the most important parts of the policy:
 
@@ -285,7 +285,7 @@ This policy is currently using API Management internal cache mode. That is a in-
 So, it might occur that internally, API Management instances will try route to throttled backends and will need to retry to another backend. Eventually, all instances will be in sync again at a small cost of unnecessary roundtrips to throttled endpoints.
 I honestly think this is a very small price to pay, but if you want to solve that you can always change API Management [to use an external Redis cache](https://learn.microsoft.com/azure/api-management/api-management-howto-cache-external) so all instances will share the same cached object.
 
-## :question: FAQ
+## FAQ
 
 ### I don't know anything about API Management. Where and how I add this code?
 You just need to copy the contents of the [policy XML](apim-policy.xml), modify the backends list (from line 21 to 83) and paste into one of your APIs policies. There is an easy tutorial on how to do that [here](https://learn.microsoft.com/azure/api-management/set-edit-policies?tabs=form).
@@ -320,5 +320,6 @@ Check the difference in the API Management capacity metric with the same number 
 
 The left part of the chart shows 20% average capacity for 4K RPM with API Management sends the response immediately. The right part of the chart shows 60% average capacity utilization with the same 4K RPM! Just because it holds the connection longer. That's 3 times more! The same behavior will happen if you configure API Management retries with waiting times: you will add extra pressure and it even might become a single point of failure in high traffic situations.
 
-## :link: Related articles
-- A more detailed and user-friendly step-by-step article by [csiebler](https://github.com/csiebler): [Smart Load-Balancing for Azure OpenAI with Azure API Management](https://clemenssiebler.com/posts/smart-loadbalancing-for-azure-openai-with-api-management/)
+## Related articles
+- [Support](SUPPORT.md)
+
