@@ -128,12 +128,12 @@ In cases where multiple backends have the same priority and none of them are thr
     ],
     ```
     We won't use this, but in order to import the file into API Management, we need to a correct URL there.
-6. Goto your API Management instance in the Azure Portal, then select `API` on the left side, click `+ Add API` and select `OpenAI`
+6. Goto your API Management instance in the Azure Portal, then select `API` on the left side, click `+ Add API` and select `Open API`
 7. Load your `inference.json` and click `Create`.
 > [!NOTE]   
 > If you are using the Azure OpenAI SDK, make sure you set the API suffix to "something/**openai**". For example, "openai-load-balancing/**openai**". This is needed because the Azure OpenAI SDK automatically appends "/openai" in the requests and if that is missing in the API suffix, API Management will return 404 Not Found. Unless you want to use the API suffix solely as "openai", then there is no need to duplicate like "openai/openai".
 8. Select the new API, goto `Settings`, goto `Subscription` and ensure `Subscription required` is checked and `Header name` is set to `api-key`. This is important to ensure compatibility with the OpenAI SDK.
-9. Now edit `apim-policy.xml` from this repo and update the backend section as needed:
+9. Now edit `smart-balancing-policy.xml` from this repo and update the backend section as needed:
     ```
     backends.Add(new JObject()
     {
